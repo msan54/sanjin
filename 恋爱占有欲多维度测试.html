@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恋爱占有欲多维度测试</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffd4e5 50%, #ffb3d9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(255, 182, 193, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #d63384;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ffe4e6;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9ab7, #ff6b9d);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: #ff9ab7;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 2px solid #ffe4e6;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff5f7;
+        }
+
+        .option:hover {
+            border-color: #ff9ab7;
+            background: #ffe4e6;
+        }
+
+        .option.selected {
+            border-color: #ff6b9d;
+            background: #ffe4e6;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.2);
+            accent-color: #ff6b9d;
+        }
+
+        .option label {
+            font-size: 16px;
+            color: #4a5568;
+            cursor: pointer;
+            flex: 1;
+            text-align: left;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff9ab7 0%, #ff6b9d 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            display: none;
+            text-align: left;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .total-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ff6b9d;
+            margin-bottom: 10px;
+        }
+
+        .score-level {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .personality-tag {
+            background: linear-gradient(135deg, #ff9ab7 0%, #ff6b9d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        }
+
+        .tag-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-description {
+            font-size: 16px;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        .radar-container {
+            background: #fff5f7;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .radar-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #d63384;
+            margin-bottom: 20px;
+        }
+
+        .dimension-cards {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .dimension-card {
+            padding: 20px;
+            background: #fff5f7;
+            border-radius: 12px;
+            border-left: 4px solid;
+            transition: transform 0.2s ease;
+        }
+
+        .dimension-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+        }
+
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .dimension-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .dimension-description {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .dimension-score {
+            text-align: right;
+        }
+
+        .score-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .score-level-text {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .progress-bar-dimension {
+            width: 100%;
+            height: 8px;
+            background: #ffe4e6;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill-dimension {
+            height: 100%;
+            transition: width 1s ease;
+            border-radius: 4px;
+        }
+
+        .dimension-advice {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .action-guide {
+            margin-top: 40px;
+        }
+
+        .guide-section {
+            background: #fff5f7;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid;
+        }
+
+        .guide-section.self {
+            border-left-color: #ff6b9d;
+        }
+
+        .guide-section.partner {
+            border-left-color: #ff9ab7;
+        }
+
+        .guide-section.relationship {
+            border-left-color: #ffb3d9;
+        }
+
+        .guide-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #d63384;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guide-content {
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        .guide-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .guide-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .guide-list li:before {
+            content: "•";
+            color: #ff6b9d;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #ffb3d9 0%, #ff9ab7 100%);
+            margin-top: 30px;
+        }
+
+        .feature-box {
+            background: #fff5f7;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #ffe4e6;
+        }
+
+        .feature-title {
+            color: #d63384;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-list {
+            text-align: left;
+            color: #4a5568;
+        }
+
+        .feature-list p {
+            margin: 8px 0;
+            padding-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+
+            .tag-name {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 开始页面 -->
+        <div id="start-page">
+            <div class="header">
+                <h1 class="title">💕 恋爱占有欲多维度测试</h1>
+                <p class="subtitle">深度了解你的情感模式，获得专业的关系指导</p>
+                <div class="feature-box">
+                    <h3 class="feature-title">🎯 测试特色</h3>
+                    <div class="feature-list">
+                        <p>✨ 5大维度专业分析：不安全感、控制欲、嫉妒心、依赖性、排他性</p>
+                        <p>🏷️ 专属人格标签识别（12种精准标签）</p>
+                        <p>📊 可视化雷达图展示</p>
+                        <p>💡 三维行动指南（自我/伴侣/关系）</p>
+                        <p>🔬 基于心理学理论设计</p>
+                    </div>
+                </div>
+            </div>
+            <button class="button" onclick="startTest()">开始测试</button>
+        </div>
+
+        <!-- 测试页面 -->
+        <div id="test-page" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number" id="question-number"></div>
+                <div class="question-text" id="question-text"></div>
+                
+                <div class="options" id="options-container"></div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <button class="button" id="prev-btn" onclick="previousQuestion()" disabled>上一题</button>
+                <button class="button" id="next-btn" onclick="nextQuestion()" disabled>下一题</button>
+                <button class="button" id="submit-btn" onclick="submitTest()" style="display: none;">查看结果</button>
+            </div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div id="result-page" class="result-container">
+            <div class="result-header">
+                <h2 class="title">🎉 你的测试结果</h2>
+                <div class="total-score" id="total-score"></div>
+                <div class="score-level" id="score-level"></div>
+            </div>
+
+            <!-- 人格标签 -->
+            <div class="personality-tag" id="personality-tag">
+                <div class="tag-name" id="tag-name"></div>
+                <div class="tag-description" id="tag-description"></div>
+            </div>
+
+            <div class="radar-container">
+                <h3 class="radar-title">💎 占有欲雷达图</h3>
+                <canvas id="radarChart" width="400" height="400"></canvas>
+            </div>
+
+            <div>
+                <h3 style="font-size: 20px; font-weight: 600; color: #d63384; margin-bottom: 20px;">📊 维度详细分析</h3>
+                <div class="dimension-cards" id="dimension-cards"></div>
+            </div>
+
+            <!-- 行动指南 -->
+            <div class="action-guide" id="action-guide">
+                <h3 style="font-size: 24px; font-weight: 600; color: #d63384; margin-bottom: 25px; text-align: center;">🎯 专属行动指南</h3>
+                
+                <div class="guide-section self">
+                    <div class="guide-title">
+                        <span>🧠</span>
+                        <span>给你的心理调适建议</span>
+                    </div>
+                    <div class="guide-content" id="self-guide"></div>
+                </div>
+
+                <div class="guide-section partner">
+                    <div class="guide-title">
+                        <span>💝</span>
+                        <span>给你伴侣的相处指南</span>
+                    </div>
+                    <div class="guide-content" id="partner-guide"></div>
+                </div>
+
+                <div class="guide-section relationship">
+                    <div class="guide-title">
+                        <span>⚠️</span>
+                        <span>关系风险预警与建议</span>
+                    </div>
+                    <div class="guide-content" id="relationship-guide"></div>
+                </div>
+            </div>
+
+            <button class="button restart-btn" onclick="restartTest()">重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        // 题目库和维度配置
+        const dimensions = {
+            insecurity: { name: '不安全感', color: '#FF6B9D', description: '对关系稳定性的担忧程度' },
+            control: { name: '控制欲', color: '#C44569', description: '对伴侣行为的掌控需求' },
+            jealousy: { name: '嫉妒心', color: '#F8B500', description: '对异性接触的敏感度' },
+            dependency: { name: '依赖性', color: '#4ECDC4', description: '对伴侣的情感依赖程度' },
+            possessiveness: { name: '排他性', color: '#95E1D3', description: '希望独占伴侣的程度' }
+        };
+
+        const questionBank = [
+            { text: "我需要不断确认伴侣是否还爱我", dimension: "insecurity", weight: 1.0 },
+            { text: "我会频繁查看伴侣的手机消息", dimension: "control", weight: 1.2 },
+            { text: "伴侣和异性朋友聊天会让我感到不安", dimension: "jealousy", weight: 1.0 },
+            { text: "我希望伴侣的所有时间都只属于我", dimension: "dependency", weight: 1.1 },
+            { text: "伴侣晚归时我会不断追问原因", dimension: "control", weight: 1.0 },
+            { text: "我会限制伴侣参加有异性的社交活动", dimension: "possessiveness", weight: 1.2 },
+            { text: "我需要知道伴侣的所有行踪", dimension: "control", weight: 1.3 },
+            { text: "伴侣和别人（尤其是异性）互动时我会嫉妒", dimension: "jealousy", weight: 1.1 },
+            { text: "我不喜欢伴侣有除我之外的亲密朋友", dimension: "possessiveness", weight: 1.0 },
+            { text: "我会因为伴侣和别人聊天而感到被忽视", dimension: "insecurity", weight: 1.0 },
+            { text: "我希望伴侣的社交圈完全在我的掌控中", dimension: "control", weight: 1.4 },
+            { text: "伴侣对别人（尤其是异性）好会让我不开心", dimension: "jealousy", weight: 1.0 },
+            { text: "我会因为伴侣没及时回消息而焦虑", dimension: "insecurity", weight: 0.9 },
+            { text: "我不允许伴侣有秘密瞒着我", dimension: "control", weight: 1.2 },
+            { text: "我会因为伴侣和朋友出去玩而感到不满", dimension: "dependency", weight: 1.0 },
+            { text: "我希望伴侣把我放在所有事情的第一位", dimension: "dependency", weight: 1.1 },
+            { text: "我会检查伴侣的消费记录或社交平台", dimension: "control", weight: 1.3 },
+            { text: "伴侣和前任有联系会让我无法接受", dimension: "jealousy", weight: 1.2 },
+            { text: "我会因为伴侣和同事走得近而猜疑", dimension: "jealousy", weight: 1.0 },
+            { text: "我需要伴侣时刻向我报备动态", dimension: "control", weight: 1.2 },
+            { text: "我不喜欢伴侣有自己的私人空间", dimension: "possessiveness", weight: 1.2 },
+            { text: "伴侣夸奖别人会让我觉得他/她对我不够专注", dimension: "insecurity", weight: 0.9 },
+            { text: "我会因为伴侣和朋友聚会而感到被冷落", dimension: "insecurity", weight: 1.0 },
+            { text: "我希望伴侣的生活重心完全围绕我", dimension: "dependency", weight: 1.3 },
+            { text: "我会因为伴侣没优先回复我而生气", dimension: "insecurity", weight: 0.9 },
+            { text: "我不允许伴侣和我不认识的人过多接触", dimension: "control", weight: 1.2 },
+            { text: "我会因为伴侣和别人分享心事而感到嫉妒", dimension: "jealousy", weight: 1.0 },
+            { text: "我需要伴侣在任何时候都能立即回应我", dimension: "dependency", weight: 1.1 },
+            { text: "我会限制伴侣的业余爱好（如果需要花时间独处）", dimension: "control", weight: 1.3 },
+            { text: "伴侣和异性同事加班会让我胡思乱想", dimension: "jealousy", weight: 1.1 },
+            { text: "我希望伴侣的朋友圈里只有我们的合照", dimension: "possessiveness", weight: 1.0 },
+            { text: "我会因为伴侣关注其他异性的社交媒体而不快", dimension: "jealousy", weight: 1.0 },
+            { text: "我不喜欢伴侣有自己的社交圈", dimension: "possessiveness", weight: 1.3 },
+            { text: "伴侣和朋友出去旅游我会感到不安", dimension: "insecurity", weight: 1.0 },
+            { text: "我需要伴侣把所有密码都告诉我", dimension: "control", weight: 1.4 },
+            { text: "我会因为伴侣和别人开玩笑而觉得他/她不够认真", dimension: "insecurity", weight: 0.8 },
+            { text: "我希望伴侣的所有决定都和我商量", dimension: "control", weight: 1.2 },
+            { text: "我会因为伴侣和别人（尤其是异性）吃饭而追问细节", dimension: "jealousy", weight: 1.1 },
+            { text: "我不允许伴侣单独和异性朋友见面", dimension: "possessiveness", weight: 1.4 },
+            { text: "我会因为伴侣对别人（尤其是异性）微笑而感到不舒服", dimension: "jealousy", weight: 1.2 },
+            { text: "我需要伴侣在我需要的时候随时出现", dimension: "dependency", weight: 1.2 },
+            { text: "我会限制伴侣的工作应酬（如果有异性参与）", dimension: "control", weight: 1.3 },
+            { text: "伴侣和异性同学联系会让我产生怀疑", dimension: "jealousy", weight: 1.0 },
+            { text: "我希望伴侣的生活里只有我一个重要的人", dimension: "possessiveness", weight: 1.4 },
+            { text: "我会因为伴侣没把我介绍给他/她的所有朋友而不满", dimension: "insecurity", weight: 0.9 },
+            { text: "我不喜欢伴侣有除了我之外的倾诉对象", dimension: "possessiveness", weight: 1.2 },
+            { text: "伴侣参加公司团建（有异性）我会反复叮嘱", dimension: "control", weight: 1.1 },
+            { text: "我需要伴侣时刻表达对我的爱意", dimension: "insecurity", weight: 1.1 },
+            { text: "我会因为伴侣和别人（尤其是异性）有共同兴趣而感到威胁", dimension: "jealousy", weight: 1.0 },
+            { text: "当伴侣没有第一时间回复我时，我会感到被忽视", dimension: "insecurity", weight: 0.9 }
+        ];
+
+        // 人格标签配置
+        const personalityTags = [
+            {
+                conditions: (levels) => levels.insecurity === 'high' && levels.dependency === 'high',
+                tag: "焦虑依恋型",
+                description: "你容易担心伴侣是否爱你，情感依赖强烈，在感情中比较敏感和焦虑，渴望更多的确认和陪伴。"
+            },
+            {
+                conditions: (levels) => levels.control === 'high' && levels.jealousy === 'high',
+                tag: "霸道掌控型",
+                description: "你希望完全掌控伴侣的行为，嫉妒心强，容易强势介入对方生活，渴望关系的主导权。"
+            },
+            {
+                conditions: (levels) => levels.jealousy === 'high' && levels.possessiveness === 'high',
+                tag: "占有欲爆棚型",
+                description: "你对伴侣极度排他，不能接受任何异性靠近，有强烈的占有欲望和归属感需求。"
+            },
+            {
+                conditions: (levels) => Object.values(levels).every(lv => lv === 'low'),
+                tag: "佛系放养型",
+                description: "你对伴侣拥有高度信任和尊重，给予充分自由，关系轻松自在，是理想的恋爱状态。"
+            },
+            {
+                conditions: (levels) => levels.dependency === 'high' && levels.jealousy === 'high',
+                tag: "黏人小可爱型",
+                description: "你依赖伴侣又容易吃醋，渴望被关注与照顾，希望成为对方生活的重心。"
+            },
+            {
+                conditions: (levels) => levels.insecurity === 'high' && levels.control === 'high',
+                tag: "疑心查岗型",
+                description: "你容易怀疑伴侣，喜欢查岗和频繁确认，对关系缺乏安全感，需要更多信任建立。"
+            },
+            {
+                conditions: (levels) => levels.control === 'high' && levels.possessiveness === 'high',
+                tag: "强势保护型",
+                description: "你希望保护和掌控伴侣，不允许外界干扰，有强烈的领域意识和保护欲。"
+            },
+            {
+                conditions: (levels) => levels.insecurity === 'high' && levels.jealousy === 'high',
+                tag: "敏感玻璃心型",
+                description: "你对关系变化敏感，容易因小事产生嫉妒和不安，需要更多的情感支持和理解。"
+            },
+            {
+                conditions: (levels) => levels.dependency === 'high' && levels.control === 'high',
+                tag: "全方位依赖型",
+                description: "你既依赖伴侣又想控制对方，希望两人完全融为一体，界限模糊。"
+            },
+            {
+                conditions: (levels) => Object.values(levels).filter(lv => lv === 'high').length >= 3,
+                tag: "占有欲MAX型",
+                description: "你在多个维度都表现出强烈的占有欲，对关系有极高的控制需求和情感投入。"
+            },
+            {
+                conditions: (levels) => Object.values(levels).every(lv => lv === 'medium'),
+                tag: "平衡适度型",
+                description: "你的各项指标都比较均衡，既有适度的在意又不过分，是相对健康的恋爱状态。"
+            },
+            {
+                conditions: () => true,
+                tag: "复合矛盾型",
+                description: "你的占有欲和情感特点比较复杂多元，在不同情况下可能表现出不同的特征。"
+            }
+        ];
+
+        // 行动指南配置
+        const actionGuides = {
+            "焦虑依恋型": {
+                self: [
+                    "练习自我肯定：每天写下3件你做得好的事情，培养自我价值感",
+                    "学会情绪调节：当焦虑时，尝试深呼吸或冥想5-10分钟",
+                    "建立安全感：制定个人成长计划，通过提升自己来增强内心安全感"
+                ],
+                partner: [
+                    "多给予言语肯定和身体接触，让TA感受到你的爱意",
+                    "保持沟通的及时性，避免让TA产生被忽视的感觉",
+                    "耐心解释你的行为和想法，帮助TA建立对关系的信心"
+                ],
+                relationship: [
+                    "风险：过度寻求确认可能让伴侣感到压力，导致关系紧张",
+                    "建议：建立定期沟通时间，让双方都能表达需求和感受",
+                    "预防：培养共同兴趣，增加正面互动，减少焦虑情绪"
+                ]
+            },
+            "霸道掌控型": {
+                self: [
+                    "学会放手：每周选择一件事完全交给伴侣决定，练习信任",
+                    "培养同理心：站在伴侣角度思考，理解TA的感受和需求",
+                    "发展个人兴趣：将注意力转向自己的成长和爱好"
+                ],
+                partner: [
+                    "温和但坚定地设立边界，不要完全妥协自己的自由",
+                    "用积极的方式引导TA参与决策，而不是被动接受控制",
+                    "及时沟通不适感受，避免积累怨恨情绪"
+                ],
+                relationship: [
+                    "风险：过度控制会让伴侣感到窒息，可能导致反抗或逃避",
+                    "建议：建立平等的决策机制，重要事情共同商量",
+                    "预防：定期检视关系动态，确保双方都有发言权和自主权"
+                ]
+            },
+            "占有欲爆棚型": {
+                self: [
+                    "理性分析：当嫉妒时，问自己'这种担心是否合理？'",
+                    "扩展社交圈：培养自己的朋友关系，减少对伴侣的过度关注",
+                    "学习信任：从小事开始练习相信伴侣，逐步建立信任感"
+                ],
+                partner: [
+                    "保持透明度：主动分享你的日常和社交情况",
+                    "给予安全感：经常表达对关系的承诺和对TA的爱意",
+                    "设定合理边界：既要照顾TA的感受，也要保持适度的社交自由"
+                ],
+                relationship: [
+                    "风险：极度排他可能导致社交孤立，影响双方的人际关系",
+                    "建议：逐步扩大共同社交圈，让TA感受到包容而非威胁",
+                    "预防：建立信任仪式，如定期约会、分享日常等"
+                ]
+            },
+            "佛系放养型": {
+                self: [
+                    "保持这种健康的心态，继续给予伴侣充分的信任和自由",
+                    "适度表达关心：虽然不占有，但也要让伴侣感受到你的在意",
+                    "维护关系热度：避免过于佛系而忽略了关系的经营"
+                ],
+                partner: [
+                    "珍惜这种自由的关系氛围，不要滥用对方的信任",
+                    "主动表达爱意：TA的不占有不代表不在意，要让TA感受到被爱",
+                    "保持适度的分享：让TA了解你的生活，维持情感连接"
+                ],
+                relationship: [
+                    "优势：这是最健康的关系状态，双方都有成长空间",
+                    "注意：避免过于独立而缺乏亲密感",
+                    "维护：定期检视关系需求，确保双方的情感需求都得到满足"
+                ]
+            },
+            "黏人小可爱型": {
+                self: [
+                    "培养独立性：每天安排一些独处时间，学会享受独处",
+                    "发展个人兴趣：找到除了恋爱之外让你快乐的事情",
+                    "学会情绪管理：当想要黏着伴侣时，先问问自己真正需要什么"
+                ],
+                partner: [
+                    "给予足够的关注和陪伴，满足TA的情感需求",
+                    "温柔地鼓励TA发展独立性，支持TA的个人成长",
+                    "设定合理的相处时间，既满足TA的需求又保持个人空间"
+                ],
+                relationship: [
+                    "风险：过度依赖可能让关系失去平衡，产生疲劳感",
+                    "建议：培养共同兴趣的同时，也要保持各自的独立空间",
+                    "预防：定期进行关系检视，确保双方都感到舒适"
+                ]
+            },
+            "疑心查岗型": {
+                self: [
+                    "质疑负面想法：当产生怀疑时，寻找客观证据而非凭感觉",
+                    "建立信任练习：从小事开始相信伴侣，记录积极的互动",
+                    "寻求专业帮助：如果怀疑严重影响生活，考虑心理咨询"
+                ],
+                partner: [
+                    "保持耐心和理解，不要因为被怀疑而生气",
+                    "主动提供透明度：分享你的行程和想法，减少TA的疑虑",
+                    "温和地设立边界：不能无限制地接受查岗行为"
+                ],
+                relationship: [
+                    "风险：持续的怀疑会消耗关系的信任基础",
+                    "建议：建立开放的沟通机制，有疑虑时直接表达而非暗中调查",
+                    "预防：通过共同活动和深度沟通来建立更强的信任纽带"
+                ]
+            },
+            "强势保护型": {
+                self: [
+                    "区分保护和控制：真正的保护是支持对方成长，而非限制自由",
+                    "学会协商：重要决定时，听取伴侣的意见并尊重TA的选择",
+                    "培养柔软的一面：在强势之外，也要展现温柔和脆弱"
+                ],
+                partner: [
+                    "感谢TA的保护意图，但也要表达自己的独立需求",
+                    "参与决策过程：不要完全被动，要表达自己的想法和意见",
+                    "温和地挑战过度保护：用爱的方式让TA明白你的能力"
+                ],
+                relationship: [
+                    "风险：过度保护可能阻碍伴侣的个人成长",
+                    "建议：建立平等的伙伴关系，互相支持而非单方面保护",
+                    "预防：定期讨论关系中的权力分配，确保平衡"
+                ]
+            },
+            "敏感玻璃心型": {
+                self: [
+                    "情绪日记：记录触发敏感情绪的事件，寻找规律和应对方法",
+                    "增强心理韧性：通过运动、冥想等方式提高情绪调节能力",
+                    "正面解读：练习从积极角度理解伴侣的行为"
+                ],
+                partner: [
+                    "温柔对待TA的敏感，避免粗暴的言语或行为",
+                    "及时澄清误会：当发现TA有误解时，耐心解释",
+                    "给予更多的情感支持和肯定"
+                ],
+                relationship: [
+                    "风险：过度敏感可能导致频繁的误会和冲突",
+                    "建议：建立安全的沟通环境，让双方都能自由表达",
+                    "预防：定期进行情感检视，及时处理积累的负面情绪"
+                ]
+            },
+            "全方位依赖型": {
+                self: [
+                    "逐步培养独立性：从小事开始，学会独立决策和行动",
+                    "建立个人身份：除了'某某的伴侣'，你还是独特的个体",
+                    "学会自我满足：找到不依赖他人就能获得快乐的方式"
+                ],
+                partner: [
+                    "温和地鼓励TA的独立行为，给予正面反馈",
+                    "避免过度迁就：适度的拒绝有助于TA成长",
+                    "支持TA发展个人兴趣和社交关系"
+                ],
+                relationship: [
+                    "风险：过度依赖会让关系失去活力和成长空间",
+                    "建议：设定个人成长目标，在关系中保持个体性",
+                    "预防：定期评估关系的健康度，避免共生关系"
+                ]
+            },
+            "占有欲MAX型": {
+                self: [
+                    "寻求专业帮助：强烈的占有欲可能需要心理咨询师的专业指导",
+                    "自我反思：深入探索占有欲背后的恐惧和不安",
+                    "逐步放松控制：从最不重要的事情开始，练习放手"
+                ],
+                partner: [
+                    "设立明确边界：不能因为爱而完全牺牲自己的自由",
+                    "寻求外部支持：朋友、家人或专业人士的建议很重要",
+                    "保持自己的生活：不要完全被对方的占有欲所控制"
+                ],
+                relationship: [
+                    "风险：极强的占有欲可能导致关系的窒息和破裂",
+                    "建议：考虑情侣咨询，在专业指导下改善关系模式",
+                    "预防：建立健康的关系边界，学会尊重彼此的独立性"
+                ]
+            },
+            "平衡适度型": {
+                self: [
+                    "保持这种平衡状态，继续关注关系的健康发展",
+                    "适时调整：根据关系的不同阶段，灵活调整自己的表现",
+                    "持续学习：通过阅读、交流等方式提升关系经营能力"
+                ],
+                partner: [
+                    "珍惜这种平衡的关系状态，共同维护",
+                    "保持开放沟通：及时分享感受和需求",
+                    "一起成长：在关系中互相支持，共同进步"
+                ],
+                relationship: [
+                    "优势：这是相对健康和稳定的关系状态",
+                    "维护：定期检视关系状态，及时调整",
+                    "发展：在稳定的基础上，探索更深层的情感连接"
+                ]
+            },
+            "复合矛盾型": {
+                self: [
+                    "自我探索：深入了解自己在不同情况下的情感反应",
+                    "寻找规律：观察什么情况下你会表现出不同的占有欲特征",
+                    "整合自我：接受自己的复杂性，学会管理不同的情感状态"
+                ],
+                partner: [
+                    "保持耐心：理解TA的复杂性，不要试图简单定义",
+                    "灵活应对：根据TA的不同状态，调整相处方式",
+                    "深度沟通：帮助TA更好地理解和表达自己的情感"
+                ],
+                relationship: [
+                    "挑战：复杂的情感模式可能让关系难以预测",
+                    "机会：多元化的特征也意味着更丰富的关系体验",
+                    "建议：建立稳定的沟通机制，及时处理情感变化"
+                ]
+            }
+        };
+
+        // 测试状态
+        let currentQuestion = 0;
+        let answers = [];
+        let selectedQuestions = [];
+
+        // 选择50道题进行测试
+        function selectRandomQuestions() {
+            const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffled.slice(0, 50);
+            answers = new Array(50).fill(null);
+        }
+
+        // 开始测试
+        function startTest() {
+            selectRandomQuestions();
+            document.getElementById('start-page').style.display = 'none';
+            document.getElementById('test-page').style.display = 'block';
+            showQuestion();
+        }
+
+        // 显示题目
+        function showQuestion() {
+            const question = selectedQuestions[currentQuestion];
+            document.getElementById('question-number').textContent = `第 ${currentQuestion + 1} 题 / 共 50 题`;
+            document.getElementById('question-text').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            const options = [
+                { value: 4, text: '非常符合' },
+                { value: 3, text: '比较符合' },
+                { value: 2, text: '不太符合' },
+                { value: 1, text: '完全不符合' }
+            ];
+            
+            options.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                if (answers[currentQuestion] === option.value) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionDiv.innerHTML = `
+                    <input type="radio" name="q${currentQuestion}" value="${option.value}" 
+                           ${answers[currentQuestion] === option.value ? 'checked' : ''}>
+                    <label>${option.text}</label>
+                `;
+                
+                optionDiv.addEventListener('click', () => selectOption(option.value, optionDiv));
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            updateProgress();
+            updateButtons();
+        }
+
+        // 选择选项
+        function selectOption(value, optionDiv) {
+            answers[currentQuestion] = value;
+            
+            // 更新选中状态
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            optionDiv.classList.add('selected');
+            
+            // 更新单选按钮
+            const radio = optionDiv.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            updateButtons();
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / 50) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        // 更新按钮状态
+        function updateButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            prevBtn.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === 49) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+                submitBtn.disabled = answers[currentQuestion] === null;
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+                nextBtn.disabled = answers[currentQuestion] === null;
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentQuestion < 49 && answers[currentQuestion] !== null) {
+                currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        // 上一题
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        // 计算维度得分
+        function calculateDimensionScores() {
+            const dimensionScores = {
+                insecurity: { total: 0, count: 0, maxPossible: 0 },
+                control: { total: 0, count: 0, maxPossible: 0 },
+                jealousy: { total: 0, count: 0, maxPossible: 0 },
+                dependency: { total: 0, count: 0, maxPossible: 0 },
+                possessiveness: { total: 0, count: 0, maxPossible: 0 }
+            };
+
+            answers.forEach((answer, index) => {
+                if (answer !== null) {
+                    const question = selectedQuestions[index];
+                    const dimension = question.dimension;
+                    const weight = question.weight;
+                    
+                    dimensionScores[dimension].total += answer * weight;
+                    dimensionScores[dimension].count += 1;
+                    dimensionScores[dimension].maxPossible += 4 * weight;
+                }
+            });
+
+            const percentageScores = {};
+            Object.keys(dimensionScores).forEach(dim => {
+                if (dimensionScores[dim].count > 0) {
+                    percentageScores[dim] = Math.round(
+                        (dimensionScores[dim].total / dimensionScores[dim].maxPossible) * 100
+                    );
+                } else {
+                    percentageScores[dim] = 0;
+                }
+            });
+
+            return percentageScores;
+        }
+
+        // 生成人格标签
+        function generatePersonalityTag(scores) {
+            function getLevel(score) {
+                if (score >= 70) return 'high';
+                else if (score >= 40) return 'medium';
+                else return 'low';
+            }
+            
+            const levels = {};
+            Object.keys(scores).forEach(dim => {
+                levels[dim] = getLevel(scores[dim]);
+            });
+            
+            // 按优先级匹配标签
+            for (const tagConfig of personalityTags) {
+                if (tagConfig.conditions(levels)) {
+                    return {
+                        tag: tagConfig.tag,
+                        description: tagConfig.description
+                    };
+                }
+            }
+            
+            // 默认返回最后一个标签
+            return personalityTags[personalityTags.length - 1];
+        }
+
+        // 生成维度建议
+        function generateDimensionAdvice(scores) {
+            const advice = [];
+            
+            const dimensionAdviceMap = {
+                insecurity: {
+                    high: '你对关系的不安全感较强，建议培养自我价值感，学会相信伴侣的选择。可以尝试冥想、写日记等方式增强内心安全感。',
+                    medium: '你偶尔会对关系产生不安，这是正常的，但要避免过度寻求确认。建议与伴侣开诚布公地沟通你的感受。',
+                    low: '你对关系有较强的安全感，这是健康关系的基础。继续保持这种自信和信任。'
+                },
+                control: {
+                    high: '你的控制欲较强，建议尊重伴侣的私人空间，建立更平等的相处模式。试着培养自己的兴趣爱好，减少对伴侣的过度关注。',
+                    medium: '你对伴侣有一定的监督需求，注意把握度，避免过度干涉。可以和伴侣约定合理的边界。',
+                    low: '你懂得给予伴侣自由，这种信任是关系稳定的关键。继续保持这种尊重和理解。'
+                },
+                jealousy: {
+                    high: '你的嫉妒心较强，建议增强自信，接受伴侣有正常的社交需求。可以通过运动、学习新技能等方式提升自我价值感。',
+                    medium: '你对异性接触有一定敏感度，属于正常范围，但要避免过度猜疑。建议理性分析情况，避免情绪化反应。',
+                    low: '你对伴侣的社交持开放态度，这种成熟值得肯定。这样的心态有助于关系的长久发展。'
+                },
+                dependency: {
+                    high: '你对伴侣的情感依赖较强，建议培养独立性，丰富自己的生活。可以发展个人兴趣，维护独立的社交圈。',
+                    medium: '你对伴侣有适度的情感需求，保持平衡即可。注意不要让依赖变成负担。',
+                    low: '你保持着良好的独立性，这让关系更健康。独立的个体才能构建更稳固的关系。'
+                },
+                possessiveness: {
+                    high: '你希望独占伴侣的倾向明显，建议接受伴侣也需要其他关系的事实。健康的关系需要给彼此成长的空间。',
+                    medium: '你希望在伴侣生活中占重要位置，这可以理解，但要留给对方空间。平衡是关键。',
+                    low: '你接受伴侣有多元化的人际关系，这种包容难能可贵。这样的心态有助于关系的和谐发展。'
+                }
+            };
+            
+            Object.entries(scores).forEach(([dimension, score]) => {
+                let level, levelText, color;
+                
+                if (score >= 70) {
+                    level = 'high';
+                    levelText = '较高';
+                    color = dimensions[dimension].color;
+                } else if (score >= 40) {
+                    level = 'medium';
+                    levelText = '适中';
+                    color = '#F8B500';
+                } else {
+                    level = 'low';
+                    levelText = '较低';
+                    color = '#4ECDC4';
+                }
+                
+                advice.push({
+                    dimension: dimensions[dimension].name,
+                    score: score,
+                    level: levelText,
+                    color: color,
+                    description: dimensions[dimension].description,
+                    suggestion: dimensionAdviceMap[dimension][level]
+                });
+            });
+            
+            return advice;
+        }
+
+        // 生成行动指南
+        function generateActionGuide(personalityTag) {
+            const guide = actionGuides[personalityTag] || actionGuides["复合矛盾型"];
+            
+            return {
+                self: guide.self,
+                partner: guide.partner,
+                relationship: guide.relationship
+            };
+        }
+
+        // 绘制雷达图
+        function drawRadarChart(scores) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['不安全感', '控制欲', '嫉妒心', '依赖性', '排他性'],
+                    datasets: [{
+                        label: '你的得分',
+                        data: [
+                            scores.insecurity,
+                            scores.control,
+                            scores.jealousy,
+                            scores.dependency,
+                            scores.possessiveness
+                        ],
+                        backgroundColor: 'rgba(255, 107, 157, 0.2)',
+                        borderColor: '#ff6b9d',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ff6b9d',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#ff6b9d'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                color: '#ffe4e6'
+                            },
+                            angleLines: {
+                                color: '#ffe4e6'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 渲染维度卡片
+        function renderDimensionCards(dimensionAdvice) {
+            const container = document.getElementById('dimension-cards');
+            container.innerHTML = '';
+            
+            dimensionAdvice.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'dimension-card';
+                card.style.borderLeftColor = item.color;
+                
+                card.innerHTML = `
+                    <div class="dimension-header">
+                        <div>
+                            <div class="dimension-name">${item.dimension}</div>
+                            <div class="dimension-description">${item.description}</div>
+                        </div>
+                        <div class="dimension-score">
+                            <div class="score-number" style="color: ${item.color};">${item.score}</div>
+                            <div class="score-level-text">${item.level}</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-dimension">
+                        <div class="progress-fill-dimension" style="width: ${item.score}%; background: ${item.color};"></div>
+                    </div>
+                    <div class="dimension-advice">${item.suggestion}</div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 渲染行动指南
+        function renderActionGuide(actionGuide) {
+            // 渲染自我建议
+            const selfGuide = document.getElementById('self-guide');
+            selfGuide.innerHTML = `
+                <ul class="guide-list">
+                    ${actionGuide.self.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `;
+
+            // 渲染伴侣建议
+            const partnerGuide = document.getElementById('partner-guide');
+            partnerGuide.innerHTML = `
+                <ul class="guide-list">
+                    ${actionGuide.partner.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `;
+
+            // 渲染关系建议
+            const relationshipGuide = document.getElementById('relationship-guide');
+            relationshipGuide.innerHTML = `
+                <ul class="guide-list">
+                    ${actionGuide.relationship.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        // 提交测试
+        function submitTest() {
+            if (answers.includes(null)) {
+                alert('请完成所有题目！');
+                return;
+            }
+
+            // 计算总分
+            const totalScore = answers.reduce((sum, answer) => sum + answer, 0);
+            const maxScore = 50 * 4;
+            const percentage = Math.round((totalScore / maxScore) * 100);
+
+            // 计算维度得分
+            const dimensionScores = calculateDimensionScores();
+            
+            // 生成人格标签
+            const personalityResult = generatePersonalityTag(dimensionScores);
+            
+            // 生成维度建议
+            const dimensionAdvice = generateDimensionAdvice(dimensionScores);
+            
+            // 生成行动指南
+            const actionGuide = generateActionGuide(personalityResult.tag);
+
+            // 显示结果
+            document.getElementById('test-page').style.display = 'none';
+            document.getElementById('result-page').style.display = 'block';
+            
+            document.getElementById('total-score').textContent = percentage + '分';
+            
+            let levelText, levelColor;
+            if (percentage >= 75) {
+                levelText = '占有欲很强';
+                levelColor = '#ff6b9d';
+            } else if (percentage >= 50) {
+                levelText = '占有欲较强';
+                levelColor = '#ff9ab7';
+            } else if (percentage >= 25) {
+                levelText = '占有欲适中';
+                levelColor = '#4ECDC4';
+            } else {
+                levelText = '占有欲较低';
+                levelColor = '#95E1D3';
+            }
+            
+            const scoreLevelElement = document.getElementById('score-level');
+            scoreLevelElement.textContent = levelText;
+            scoreLevelElement.style.color = levelColor;
+
+            // 显示人格标签
+            document.getElementById('tag-name').textContent = personalityResult.tag;
+            document.getElementById('tag-description').textContent = personalityResult.description;
+
+            // 绘制雷达图
+            setTimeout(() => {
+                drawRadarChart(dimensionScores);
+            }, 100);
+            
+            // 渲染维度卡片
+            renderDimensionCards(dimensionAdvice);
+            
+            // 渲染行动指南
+            renderActionGuide(actionGuide);
+        }
+
+        // 重新测试
+        function restartTest() {
+            currentQuestion = 0;
+            answers = [];
+            selectedQuestions = [];
+            
+            document.getElementById('result-page').style.display = 'none';
+            document.getElementById('start-page').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
